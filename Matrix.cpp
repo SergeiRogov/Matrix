@@ -1,7 +1,7 @@
 /** \file Matrix.cpp
  *  \brief     This file performs basic matrix operations.
  *  \details   The program shows a menu with 5 options and does matrix operations.
- *  \author    Sergei Rogov
+ *  \author    Sergei Rogov U231N0051
  *  \date      01.04.2023
  *  \copyright University of Nicosia.
  */
@@ -34,11 +34,18 @@ private:
     float entry[MAX_ROW][MAX_COL];
 };
 
+
+
 int main(){
     int choice;
     do {
         displayMenu();
-        cin >> choice;
+        //executes loop if user inserts a number not in the range 1..5.
+        while (cout << "\nEnter your choice: " && (!(cin >> choice) || choice < 1 || choice > 5)) {
+            cin.clear(); 
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
+            cout << "Invalid input; please enter a number from 1 to 5.\n";
+        }
         makeAction(choice);
     } while (choice != 5);
     
@@ -55,22 +62,21 @@ void displayMenu(){
     cout <<  "\n3) Multiply two matrices";
     cout <<  "\n4) Inverse of a matrix";
     cout <<  "\n5) Quit\n";
-    cout <<  "\nEnter your choice: ";
 }
 
-void makeAction(int choice){
+void makeAction(const int choice){
     switch (choice) {
     case 1: // add
-
+        cout <<  "\n1)\n";
         break;
     case 2: // substruct
-        
+        cout <<  "\n2)\n";
         break;
     case 3: // multiply
-        
+        cout <<  "\n3)\n";
         break;
     case 4: // inverse
-        
+        cout <<  "\n4)\n";
         break;
     case 5: // No code needed
         break;
