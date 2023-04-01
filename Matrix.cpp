@@ -49,7 +49,7 @@ int main(){
     int choice;
     do {
         displayMenu();
-        //executes loop if user inserts a number not in the range 1..5.
+        //executes loop if user inserts not a number or number not in the range 1..5.
         while (cout << "\nEnter your choice: " && (!(cin >> choice) || choice < 1 || choice > MAX_ROW)) {
             cin.clear(); 
             cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
@@ -164,15 +164,22 @@ void Matrix::PrintMatrix() const {
     }
 }
 
+/**
+ * Function <code>AddSubtract</code> performs addition or substraction of two matrices.
+ * <BR>
+ * @param ch Indicates '+' or '-': which operation to perform.
+ * @param A Left-side matrix.
+ * @param B Right-side matrix.
+ * @return Returns <code>false</code> if operation can't be performed,
+ * <code>true</code> otherwise.
+ */
 bool Matrix::AddSubtract(const char ch, const Matrix &A, const Matrix &B){
     if (A.row != B.row || A.col != B.col) return false;
     row = A.row;
     col = A.col;
     if(ch == '+'){
-        cout << "Here\n";
         for(int i=0; i<row; i++){
             for(int j=0; j<col; j++){
-                cout << "Here\n";
                 entry[i][j] = A.entry[i][j] + B.entry[i][j];
             }
         }
@@ -186,6 +193,14 @@ bool Matrix::AddSubtract(const char ch, const Matrix &A, const Matrix &B){
     return true;
 }
 
+/**
+ * Function <code>Multiply</code> performs multiplication of two matrices.
+ * <BR>
+ * @param A Left-side matrix.
+ * @param B Right-side matrix.
+ * @return Returns <code>false</code> if operation can't be performed,
+ * <code>true</code> otherwise.
+ */
 bool Matrix::Multiply(const Matrix &A, const Matrix &B){
     if (A.col != B.row) return false;
     row = A.row;
