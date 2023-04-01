@@ -7,6 +7,7 @@
  */
 
 #include <iostream>
+#include <iomanip> 
 #include <cstdlib> 
 #include <cassert>
 
@@ -25,11 +26,12 @@ public:
     Matrix(); //initialize row and col to 0
     void ReadMatrix();
     void PrintMatrix() const;
-    bool AddSubtract(char, const Matrix &, const Matrix &);
+    bool AddSubtract(const char, const Matrix &, const Matrix &);
     bool Multiply(const Matrix &, const Matrix &);
     bool Inverse(const Matrix &);
     Matrix& operator=(const Matrix &);
 private:
+    void IdentityMatrix();
     int row, col;
     float entry[MAX_ROW][MAX_COL];
 };
@@ -41,9 +43,9 @@ private:
  * @return Returns <code>0</code> on success, any other value otherwise.
  */
 int main(){
-    Matrix A;
-    A.ReadMatrix();
-    A.PrintMatrix();
+    // Matrix A;
+    // A.ReadMatrix();
+    // A.PrintMatrix();
     int choice;
     do {
         displayMenu();
@@ -77,18 +79,34 @@ void displayMenu(){
  * @param choice Indicator of an option from menu.
  */
 void makeAction(const int choice){
+    Matrix A, B, ResultMatrix;
     switch (choice) {
     case 1: // add
         cout <<  "\n1)\n";
+        A.ReadMatrix();
+        B.ReadMatrix();
+        if (ResultMatrix.AddSubtract('+', A, B))
+            ResultMatrix.PrintMatrix();
         break;
     case 2: // substruct
         cout <<  "\n2)\n";
+        A.ReadMatrix();
+        B.ReadMatrix();
+        if (ResultMatrix.AddSubtract('-', A, B))
+            ResultMatrix.PrintMatrix();
         break;
     case 3: // multiply
         cout <<  "\n3)\n";
+        A.ReadMatrix();
+        B.ReadMatrix();
+        if (ResultMatrix.Multiply(A, B))
+            ResultMatrix.PrintMatrix();
         break;
     case 4: // inverse
         cout <<  "\n4)\n";
+        A.ReadMatrix();
+        // ResultMatrix.Inverse(A);
+        // ResultMatrix.PrintMatrix();
         break;
     case 5: // No code needed
         break;
@@ -124,8 +142,11 @@ void Matrix::ReadMatrix(){
     }
     for(int i = 0; i < row; i++){
         for(int j = 0; j < col; j++){
-            cout << "\nElement [" << i+1 << "][" << j+1 << "] = ";
-            cin >> entry[i][j];
+            while (cout << "\nElement [" << i+1 << "][" << j+1 << "] = " && (!(cin >> entry[i][j]))) {
+                cin.clear(); 
+                cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
+                cout << "Invalid input; please enter a real number\n";
+            }
         }
     }
 }
@@ -137,8 +158,49 @@ void Matrix::PrintMatrix() const {
     cout << "\n";
     for(int i=0; i<row; i++){
         for(int j=0; j<col; j++){
-            cout << entry[i][j] << " ";
+            cout << setw(10) << entry[i][j] << " ";
         }
         cout << "\n";
     }
+}
+
+bool Matrix::AddSubtract(const char ch, const Matrix &A, const Matrix &B){
+    if (A.row != B.row || A.col != B.col) return false;
+    row = A.row;
+    col = A.col;
+    if(ch == '+'){
+        cout << "Here\n";
+        for(int i=0; i<row; i++){
+            for(int j=0; j<col; j++){
+                cout << "Here\n";
+                entry[i][j] = A.entry[i][j] + B.entry[i][j];
+            }
+        }
+    } else if (ch == '-'){
+        for(int i=0; i<row; i++){
+            for(int j=0; j<col; j++){
+                entry[i][j] = A.entry[i][j] - B.entry[i][j];
+            }
+        }
+    }
+    return true;
+}
+
+bool Matrix::Multiply(const Matrix &A, const Matrix &B){
+    if (A.col != B.row) return false;
+    row = A.row;
+    col = B.col;
+    for(int i=0; i<row; i++){
+        for(int j=0; j<col; j++){
+            entry[i][j] = 0;
+        }
+    }
+    for(int i=0; i<row; i++){
+        for(int j=0; j<col; j++){
+            for(int k=0; k<A.col; k++){
+                entry[i][j] += A.entry[i][k]*B.entry[k][j];
+            }
+        }
+    }
+    return true;
 }
