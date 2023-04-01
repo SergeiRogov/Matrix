@@ -8,7 +8,6 @@
 
 #include <iostream>
 #include <cstdlib> 
-#include <ctime>
 #include <cassert>
 
 using namespace std;
@@ -19,6 +18,7 @@ const int MAX_COL = 20;
 
 // Function prototypes
 void displayMenu();
+void makeAction(const int);
 
 class Matrix {
 public:
@@ -39,26 +39,9 @@ int main(){
     do {
         displayMenu();
         cin >> choice;
-        switch (choice) {
-        case 1: // add
-
-            break;
-        case 2: // substruct
-            
-            break;
-        case 3: // multiply
-           
-            break;
-        case 4: // inverse
-            
-            break;
-        case 5: // No code needed
-            break;
-        default:
-            cerr << "Enter your choice again, please!\n";
-            break;
-        }
+        makeAction(choice);
     } while (choice != 5);
+    
     return 0;
 }
 
@@ -73,4 +56,26 @@ void displayMenu(){
     cout <<  "\n4) Inverse of a matrix";
     cout <<  "\n5) Quit\n";
     cout <<  "\nEnter your choice: ";
+}
+
+void makeAction(int choice){
+    switch (choice) {
+    case 1: // add
+
+        break;
+    case 2: // substruct
+        
+        break;
+    case 3: // multiply
+        
+        break;
+    case 4: // inverse
+        
+        break;
+    case 5: // No code needed
+        break;
+    default:
+        cerr << "Enter your choice again, please!\n";
+        break;
+    }
 }
