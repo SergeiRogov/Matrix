@@ -262,14 +262,6 @@ bool Matrix::Inverse(const Matrix &A){
             else IdentityMatrix[i][j] = 0;
         }
     }
-    cout << "IdentityMatrix\n";
-    cout << "\n";
-    for(int i=0; i<row; i++){
-        for(int j=0; j<col; j++){
-            cout << setw(10) << IdentityMatrix[i][j] << " ";
-        }
-        cout << "\n";
-    }
 
     // Gauss algorithm to turn our matrix into identity matrix
     double h;
@@ -286,7 +278,7 @@ bool Matrix::Inverse(const Matrix &A){
         // swapping rows - row with biggest absolute value 
         // of the first element (after zeros) should come first
         if(i!=i_max){
-            for(int j=i; j<col; j++){
+            for(int j=0; j<col; j++){
                 h = entry[i][j];
                 entry[i][j]=entry[i_max][j];
                 entry[i_max][j] = h;
@@ -309,29 +301,13 @@ bool Matrix::Inverse(const Matrix &A){
         // It creates zeros underneath
         for(int k=i+1; k<row; k++){
             h = entry[k][i];
-            for(int j=i; j<col; j++){
+            for(int j=0; j<col; j++){
                 entry[k][j] -= entry[i][j]*h;
                 IdentityMatrix[k][j] -= IdentityMatrix[i][j]*h;
             }
         }
     }
 
-    cout << "Our Matrix\n";
-    cout << "\n";
-    for(int i=0; i<row; i++){
-        for(int j=0; j<col; j++){
-            cout << setw(10) << entry[i][j] << " ";
-        }
-        cout << "\n";
-    }
-    cout << "IdentityMatrix1\n";
-    cout << "\n";
-    for(int i=0; i<row; i++){
-        for(int j=0; j<col; j++){
-            cout << setw(10) << IdentityMatrix[i][j] << " ";
-        }
-        cout << "\n";
-    }
     // at this point we have a "ladder matrix"
     // all elements below main diagonal are zeros
     // BACK
@@ -345,7 +321,15 @@ bool Matrix::Inverse(const Matrix &A){
             }
         }
     }
-    cout << "IdentityMatrix2\n";
+    cout << "Our Matrix\n";
+    cout << "\n";
+    for(int i=0; i<row; i++){
+        for(int j=0; j<col; j++){
+            cout << setw(10) << entry[i][j] << " ";
+        }
+        cout << "\n";
+    }
+    cout << "IdentityMatrix\n";
     cout << "\n";
     for(int i=0; i<row; i++){
         for(int j=0; j<col; j++){
