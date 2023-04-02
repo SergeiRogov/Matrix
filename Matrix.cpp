@@ -43,9 +43,14 @@ private:
  * @return Returns <code>0</code> on success, any other value otherwise.
  */
 int main(){
-    // Matrix A;
+    // Matrix A, B, C;
     // A.ReadMatrix();
     // A.PrintMatrix();
+    // B = C = A;
+    // cout << "\nmatrix B";
+    // B.PrintMatrix();
+    // cout << "\nmatrix C";
+    // C.PrintMatrix();
     int choice;
     do {
         displayMenu();
@@ -105,8 +110,9 @@ void makeAction(const int choice){
     case 4: // inverse
         cout <<  "\n4)\n";
         A.ReadMatrix();
-        // ResultMatrix.Inverse(A);
-        // ResultMatrix.PrintMatrix();
+        A.PrintMatrix();
+        if (ResultMatrix.Inverse(A))
+            ResultMatrix.PrintMatrix();
         break;
     case 5: // No code needed
         break;
@@ -217,5 +223,147 @@ bool Matrix::Multiply(const Matrix &A, const Matrix &B){
             }
         }
     }
+    return true;
+}
+
+/**
+ * Function <code>operator=</code> overloads the assignment statement.
+ * <BR>
+ * @param original original matrix which we want to assign to.
+ * @return Returns an equal matrix.
+ */
+Matrix& Matrix::operator=(const Matrix &original){
+    if(this != &original){
+        row = original.row;
+        col = original.col;
+        for(int i=0; i<row; i++){
+            for(int j=0; j<col; j++){
+                entry[i][j] = original.entry[i][j];
+            }
+        }
+    }
+    return *this;
+}
+
+/**
+ * Function <code>Inverse</code> inverses an nxn matrix.
+ * <BR>
+ * @param A A matrix to be inversed.
+ * @return Returns <code>false</code> if operation can't be performed,
+ * <code>true</code> otherwise.
+ */
+bool Matrix::Inverse(const Matrix &A){
+    if(A.row != A.col) return false;
+    // copying a matrix
+    row = A.row;
+    col = A.col;
+    for(int i=0; i<row; i++){
+        for(int j=0; j<col; j++){
+            entry[i][j] = A.entry[i][j];
+        }
+    }
+    // Gauss algorithm to turn our matrix into identity matrix
+    double h;
+    for(int i=0; i<row; i++){
+        double amax=entry[i][i];
+        int i_max = i;
+        for(int j=i+1; j<row; j++){
+            if(abs(entry[j][i])>abs(amax)){
+                amax = entry[j][i];
+                i_max = j;
+            }
+        }
+        if(i!=i_max){
+            for(int j=i; j<col; j++){
+                h = entry[i][j];
+                entry[i][j]=entry[i_max][j];
+                entry[i_max][j] = h;
+            }
+        }
+        h = entry[i][i];
+        if (h!=0){
+            for (int j=i; j<col; j++){
+                entry[i][j]=entry[i][j]/h;
+            }
+        }
+        for(int k=i+1; k<row; k++){
+            h = entry[k][i];
+            for(int j=i; j<col; j++){
+                entry[k][j]=entry[k][j]-entry[i][j]*h;
+            }
+        }
+    }
+    // back
+    for (int i=row-1; i>=0; i--){
+        for(int k=i-1; k>=0; k--){
+            h = entry[k][i];
+            for(int j=col; j>0; j--){
+                entry[k][j]=entry[k][j]-entry[i][j]*h;
+            }
+        }
+    }
+
+    // for(int i=0; i<row-1; i++){
+    //     i1=row-i;
+    //     int sum = 0;
+    //     for(int j=i1+1; j<row; j++){
+    //         sum += 
+    //     }
+    // }
+
+
+    // int pivotRow = 0;
+    // int pivotCol = 0;
+    // while(pivotRow<row && pivotCol<col){
+    //     // Finding the pivotCol-th pivot: 
+    //     int i_max = 0;
+    //     float max = 0;
+    //     for(int i=pivotRow; i<row; i++){
+    //         if (abs(entry[i][pivotCol])>max){
+    //             max = abs(entry[i][pivotCol]);
+    //             i_max = i;
+    //             // cout << i << ' ' << max << ' ' << i_max << endl;
+    //         }
+    //     }
+    //     if (entry[i_max][pivotCol]==0){
+    //         // No pivot in this column, pass to next column 
+    //         pivotCol++;
+    //     } else {
+    //         // swapping rows
+    //         float tempRow[col];
+    //         for(int i=0; i<col; i++){
+    //             tempRow[i] = entry[pivotRow][i];
+    //             entry[pivotRow][i] = entry[i_max][i];
+    //             entry[i_max][i] = tempRow[i];
+    //         }
+    //         cout << "\n";
+    //         for(int i=0; i<row; i++){
+    //             for(int j=0; j<col; j++){
+    //                 cout << setw(10) << entry[i][j] << " ";
+    //             }
+    //             cout << "\n";
+    //         }
+
+    //         // Do for all rows below pivot: 
+    //         for (int i=pivotRow+1; i<row; i++){
+    //             double f = static_cast<double>(entry[i][pivotCol])/entry[pivotRow][pivotCol];
+    //             // Fill with zeros the lower part of pivot column: 
+    //             entry[i][pivotCol] = 0;
+    //             // Do for all remaining elements in current row: 
+    //             for (int j=pivotCol+1; j<col; j++){
+    //                 entry[i][j] = entry[i][j] - entry[pivotRow][j]*f;
+    //             }
+    //         }
+    //         cout << "\n";
+    //         for(int i=0; i<row; i++){
+    //             for(int j=0; j<col; j++){
+    //                 cout << setw(10) << entry[i][j] << " ";
+    //             }
+    //             cout << "\n";
+    //         }
+    //         pivotRow++;
+    //         pivotCol++;
+    //     }
+    // }
     return true;
 }
