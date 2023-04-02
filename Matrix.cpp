@@ -31,9 +31,9 @@ public:
     bool Inverse(const Matrix &);
     Matrix& operator=(const Matrix &);
 private:
-    void IdentityMatrix();
     int row, col;
     float entry[MAX_ROW][MAX_COL];
+    float IdentityMatrix[MAX_ROW][MAX_COL];
 };
 
 /**
@@ -87,32 +87,30 @@ void makeAction(const int choice){
     Matrix A, B, ResultMatrix;
     switch (choice) {
     case 1: // add
-        cout <<  "\n1)\n";
         A.ReadMatrix();
         B.ReadMatrix();
         if (ResultMatrix.AddSubtract('+', A, B))
             ResultMatrix.PrintMatrix();
         break;
     case 2: // substruct
-        cout <<  "\n2)\n";
         A.ReadMatrix();
         B.ReadMatrix();
         if (ResultMatrix.AddSubtract('-', A, B))
             ResultMatrix.PrintMatrix();
         break;
     case 3: // multiply
-        cout <<  "\n3)\n";
         A.ReadMatrix();
         B.ReadMatrix();
         if (ResultMatrix.Multiply(A, B))
             ResultMatrix.PrintMatrix();
         break;
     case 4: // inverse
-        cout <<  "\n4)\n";
         A.ReadMatrix();
         A.PrintMatrix();
-        if (ResultMatrix.Inverse(A))
+        if (ResultMatrix.Inverse(A)){
+            cout << "Result\n";
             ResultMatrix.PrintMatrix();
+        }
         break;
     case 5: // No code needed
         break;
@@ -260,10 +258,22 @@ bool Matrix::Inverse(const Matrix &A){
     for(int i=0; i<row; i++){
         for(int j=0; j<col; j++){
             entry[i][j] = A.entry[i][j];
+            if(i==j) IdentityMatrix[i][j] = 1;
+            else IdentityMatrix[i][j] = 0;
         }
     }
+    cout << "IdentityMatrix\n";
+    cout << "\n";
+    for(int i=0; i<row; i++){
+        for(int j=0; j<col; j++){
+            cout << setw(10) << IdentityMatrix[i][j] << " ";
+        }
+        cout << "\n";
+    }
+
     // Gauss algorithm to turn our matrix into identity matrix
     double h;
+    // finding a row with the biggest first element (on absolute value)
     for(int i=0; i<row; i++){
         double amax=entry[i][i];
         int i_max = i;
@@ -273,97 +283,75 @@ bool Matrix::Inverse(const Matrix &A){
                 i_max = j;
             }
         }
+        // swapping rows - row with biggest absolute value 
+        // of the first element (after zeros) should come first
         if(i!=i_max){
             for(int j=i; j<col; j++){
                 h = entry[i][j];
                 entry[i][j]=entry[i_max][j];
                 entry[i_max][j] = h;
+                h = IdentityMatrix[i][j];
+                IdentityMatrix[i][j]=IdentityMatrix[i_max][j];
+                IdentityMatrix[i_max][j] = h;
             }
         }
         h = entry[i][i];
+        // dividing a row by first element
+        // (making first element (after zeros) in row to be 1)
         if (h!=0){
-            for (int j=i; j<col; j++){
+            for (int j=0; j<col; j++){
                 entry[i][j]=entry[i][j]/h;
+                IdentityMatrix[i][j]=IdentityMatrix[i][j]/h;
             }
         }
+        // substructing [first element * first element in next (folowing) row] 
+        // from all rows below.
+        // It creates zeros underneath
         for(int k=i+1; k<row; k++){
             h = entry[k][i];
             for(int j=i; j<col; j++){
-                entry[k][j]=entry[k][j]-entry[i][j]*h;
+                entry[k][j] -= entry[i][j]*h;
+                IdentityMatrix[k][j] -= IdentityMatrix[i][j]*h;
             }
         }
     }
-    // back
+
+    cout << "Our Matrix\n";
+    cout << "\n";
+    for(int i=0; i<row; i++){
+        for(int j=0; j<col; j++){
+            cout << setw(10) << entry[i][j] << " ";
+        }
+        cout << "\n";
+    }
+    cout << "IdentityMatrix1\n";
+    cout << "\n";
+    for(int i=0; i<row; i++){
+        for(int j=0; j<col; j++){
+            cout << setw(10) << IdentityMatrix[i][j] << " ";
+        }
+        cout << "\n";
+    }
+    // at this point we have a "ladder matrix"
+    // all elements below main diagonal are zeros
+    // BACK
+    // now making all elements above main diagonal zeros as well
     for (int i=row-1; i>=0; i--){
         for(int k=i-1; k>=0; k--){
             h = entry[k][i];
-            for(int j=col; j>0; j--){
+            for(int j=col-1; j>=0; j--){
                 entry[k][j]=entry[k][j]-entry[i][j]*h;
+                IdentityMatrix[k][j]=IdentityMatrix[k][j]-IdentityMatrix[i][j]*h;
             }
         }
     }
-
-    // for(int i=0; i<row-1; i++){
-    //     i1=row-i;
-    //     int sum = 0;
-    //     for(int j=i1+1; j<row; j++){
-    //         sum += 
-    //     }
-    // }
-
-
-    // int pivotRow = 0;
-    // int pivotCol = 0;
-    // while(pivotRow<row && pivotCol<col){
-    //     // Finding the pivotCol-th pivot: 
-    //     int i_max = 0;
-    //     float max = 0;
-    //     for(int i=pivotRow; i<row; i++){
-    //         if (abs(entry[i][pivotCol])>max){
-    //             max = abs(entry[i][pivotCol]);
-    //             i_max = i;
-    //             // cout << i << ' ' << max << ' ' << i_max << endl;
-    //         }
-    //     }
-    //     if (entry[i_max][pivotCol]==0){
-    //         // No pivot in this column, pass to next column 
-    //         pivotCol++;
-    //     } else {
-    //         // swapping rows
-    //         float tempRow[col];
-    //         for(int i=0; i<col; i++){
-    //             tempRow[i] = entry[pivotRow][i];
-    //             entry[pivotRow][i] = entry[i_max][i];
-    //             entry[i_max][i] = tempRow[i];
-    //         }
-    //         cout << "\n";
-    //         for(int i=0; i<row; i++){
-    //             for(int j=0; j<col; j++){
-    //                 cout << setw(10) << entry[i][j] << " ";
-    //             }
-    //             cout << "\n";
-    //         }
-
-    //         // Do for all rows below pivot: 
-    //         for (int i=pivotRow+1; i<row; i++){
-    //             double f = static_cast<double>(entry[i][pivotCol])/entry[pivotRow][pivotCol];
-    //             // Fill with zeros the lower part of pivot column: 
-    //             entry[i][pivotCol] = 0;
-    //             // Do for all remaining elements in current row: 
-    //             for (int j=pivotCol+1; j<col; j++){
-    //                 entry[i][j] = entry[i][j] - entry[pivotRow][j]*f;
-    //             }
-    //         }
-    //         cout << "\n";
-    //         for(int i=0; i<row; i++){
-    //             for(int j=0; j<col; j++){
-    //                 cout << setw(10) << entry[i][j] << " ";
-    //             }
-    //             cout << "\n";
-    //         }
-    //         pivotRow++;
-    //         pivotCol++;
-    //     }
-    // }
+    cout << "IdentityMatrix2\n";
+    cout << "\n";
+    for(int i=0; i<row; i++){
+        for(int j=0; j<col; j++){
+            cout << setw(10) << IdentityMatrix[i][j] << " ";
+        }
+        cout << "\n";
+    }
     return true;
 }
