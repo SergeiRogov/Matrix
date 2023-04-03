@@ -271,13 +271,6 @@ bool Matrix::Inverse(const Matrix &A){
                 i_max = j;
             }
         }
-        cout << "\n";
-        for(int i=0; i<row; i++){
-            for(int j=0; j<col; j++){
-                cout << setw(10) << IdentityMatrix[i][j] << " ";
-            }
-            cout << "\n";
-        }
         // swapping rows - row with biggest absolute value 
         // of the first element (after zeros) should come first
         if(i!=i_max){
@@ -290,13 +283,6 @@ bool Matrix::Inverse(const Matrix &A){
                 entry[i_max][j] = h;
             }
         }
-        cout << "\n";
-        for(int i=0; i<row; i++){
-            for(int j=0; j<col; j++){
-                cout << setw(10) << IdentityMatrix[i][j] << " ";
-            }
-            cout << "\n";
-        }
         h = IdentityMatrix[i][i];
         // dividing a row by first element
         // (making first element [after zeros] in row to be 1)
@@ -305,13 +291,6 @@ bool Matrix::Inverse(const Matrix &A){
                 IdentityMatrix[i][j] /= static_cast<double>(h);
                 entry[i][j] /= static_cast<double>(h);
             }
-        }
-        cout << "\n";
-        for(int i=0; i<row; i++){
-            for(int j=0; j<col; j++){
-                cout << setw(10) << IdentityMatrix[i][j] << " ";
-            }
-            cout << "\n";
         }
         // substructing [first element * first element in next (following) row] 
         // from all rows below.
@@ -323,20 +302,6 @@ bool Matrix::Inverse(const Matrix &A){
                 entry[k][j] -= entry[i][j]*h;
             }
         }
-        cout << "\n";
-        for(int i=0; i<row; i++){
-            for(int j=0; j<col; j++){
-                cout << setw(10) << IdentityMatrix[i][j] << " ";
-            }
-            cout << "\n";
-        }
-    }
-    cout << "\n";
-    for(int i=0; i<row; i++){
-        for(int j=0; j<col; j++){
-            cout << setw(10) << IdentityMatrix[i][j] << " ";
-        }
-        cout << "\n";
     }
     // at this point we have a trianglular matrix
     // all elements below main diagonal are zeros
