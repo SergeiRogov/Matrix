@@ -32,8 +32,8 @@ public:
     Matrix& operator=(const Matrix &);
 private:
     int row, col;
-    float entry[MAX_ROW][MAX_COL];
-    float IdentityMatrix[MAX_ROW][MAX_COL];
+    double entry[MAX_ROW][MAX_COL];
+    double IdentityMatrix[MAX_ROW][MAX_COL];
 };
 
 /**
@@ -263,13 +263,20 @@ bool Matrix::Inverse(const Matrix &A){
     double h;
     // finding a row with the biggest first element (on absolute value)
     for(int i=0; i<row; i++){
-        double amax=IdentityMatrix[i][i];
+        float amax=IdentityMatrix[i][i];
         int i_max = i;
         for(int j=i+1; j<row; j++){
             if(abs(IdentityMatrix[j][i])>abs(amax)){
                 amax = IdentityMatrix[j][i];
                 i_max = j;
             }
+        }
+        cout << "\n";
+        for(int i=0; i<row; i++){
+            for(int j=0; j<col; j++){
+                cout << setw(10) << IdentityMatrix[i][j] << " ";
+            }
+            cout << "\n";
         }
         // swapping rows - row with biggest absolute value 
         // of the first element (after zeros) should come first
@@ -283,6 +290,13 @@ bool Matrix::Inverse(const Matrix &A){
                 entry[i_max][j] = h;
             }
         }
+        cout << "\n";
+        for(int i=0; i<row; i++){
+            for(int j=0; j<col; j++){
+                cout << setw(10) << IdentityMatrix[i][j] << " ";
+            }
+            cout << "\n";
+        }
         h = IdentityMatrix[i][i];
         // dividing a row by first element
         // (making first element [after zeros] in row to be 1)
@@ -292,7 +306,14 @@ bool Matrix::Inverse(const Matrix &A){
                 entry[i][j] /= static_cast<double>(h);
             }
         }
-        // substructing [first element * first element in next (folowing) row] 
+        cout << "\n";
+        for(int i=0; i<row; i++){
+            for(int j=0; j<col; j++){
+                cout << setw(10) << IdentityMatrix[i][j] << " ";
+            }
+            cout << "\n";
+        }
+        // substructing [first element * first element in next (following) row] 
         // from all rows below.
         // It creates zeros underneath
         for(int k=i+1; k<row; k++){
@@ -302,6 +323,20 @@ bool Matrix::Inverse(const Matrix &A){
                 entry[k][j] -= entry[i][j]*h;
             }
         }
+        cout << "\n";
+        for(int i=0; i<row; i++){
+            for(int j=0; j<col; j++){
+                cout << setw(10) << IdentityMatrix[i][j] << " ";
+            }
+            cout << "\n";
+        }
+    }
+    cout << "\n";
+    for(int i=0; i<row; i++){
+        for(int j=0; j<col; j++){
+            cout << setw(10) << IdentityMatrix[i][j] << " ";
+        }
+        cout << "\n";
     }
     // at this point we have a trianglular matrix
     // all elements below main diagonal are zeros
@@ -322,11 +357,5 @@ bool Matrix::Inverse(const Matrix &A){
             }
         }
     }
-    // copying the result from the right-hand side
-    // for(int i=0; i<row; i++){
-    //     for(int j=0; j<col; j++){
-    //         entry[i][j] = IdentityMatrix[i][j];
-    //     }
-    // }
     return true;
 }
