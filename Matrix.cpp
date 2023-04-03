@@ -62,7 +62,6 @@ int main(){
         }
         makeAction(choice);
     } while (choice != 5);
-    
     return 0;
 }
 
@@ -106,9 +105,7 @@ void makeAction(const int choice){
         break;
     case 4: // inverse
         A.ReadMatrix();
-        A.PrintMatrix();
         if (ResultMatrix.Inverse(A)){
-            cout << "Result\n";
             ResultMatrix.PrintMatrix();
         }
         break;
@@ -257,21 +254,20 @@ bool Matrix::Inverse(const Matrix &A){
     col = A.col;
     for(int i=0; i<row; i++){
         for(int j=0; j<col; j++){
-            entry[i][j] = A.entry[i][j];
-            if(i==j) IdentityMatrix[i][j] = 1;
-            else IdentityMatrix[i][j] = 0;
+            IdentityMatrix[i][j] = A.entry[i][j];
+            if(i==j) entry[i][j] = 1;
+            else entry[i][j] = 0;
         }
     }
-
-    // Gauss algorithm to turn our matrix into identity matrix
+    // GAUSS algorithm to turn our matrix into identity matrix
     double h;
     // finding a row with the biggest first element (on absolute value)
     for(int i=0; i<row; i++){
-        double amax=entry[i][i];
+        double amax=IdentityMatrix[i][i];
         int i_max = i;
         for(int j=i+1; j<row; j++){
-            if(abs(entry[j][i])>abs(amax)){
-                amax = entry[j][i];
+            if(abs(IdentityMatrix[j][i])>abs(amax)){
+                amax = IdentityMatrix[j][i];
                 i_max = j;
             }
         }
@@ -279,63 +275,58 @@ bool Matrix::Inverse(const Matrix &A){
         // of the first element (after zeros) should come first
         if(i!=i_max){
             for(int j=0; j<col; j++){
-                h = entry[i][j];
-                entry[i][j]=entry[i_max][j];
-                entry[i_max][j] = h;
                 h = IdentityMatrix[i][j];
                 IdentityMatrix[i][j]=IdentityMatrix[i_max][j];
                 IdentityMatrix[i_max][j] = h;
+                h = entry[i][j];
+                entry[i][j]=entry[i_max][j];
+                entry[i_max][j] = h;
             }
         }
-        h = entry[i][i];
+        h = IdentityMatrix[i][i];
         // dividing a row by first element
-        // (making first element (after zeros) in row to be 1)
+        // (making first element [after zeros] in row to be 1)
         if (h!=0){
             for (int j=0; j<col; j++){
-                entry[i][j]=entry[i][j]/h;
-                IdentityMatrix[i][j]=IdentityMatrix[i][j]/h;
+                IdentityMatrix[i][j] /= static_cast<double>(h);
+                entry[i][j] /= static_cast<double>(h);
             }
         }
         // substructing [first element * first element in next (folowing) row] 
         // from all rows below.
         // It creates zeros underneath
         for(int k=i+1; k<row; k++){
-            h = entry[k][i];
+            h = IdentityMatrix[k][i];
             for(int j=0; j<col; j++){
-                entry[k][j] -= entry[i][j]*h;
                 IdentityMatrix[k][j] -= IdentityMatrix[i][j]*h;
+                entry[k][j] -= entry[i][j]*h;
             }
         }
     }
-
-    // at this point we have a "ladder matrix"
+    // at this point we have a trianglular matrix
     // all elements below main diagonal are zeros
+    // check if determinant == 0
+    double unscaledDeterminant = 1;
+    for(int j=0; j<row; j++){
+        unscaledDeterminant *= IdentityMatrix[j][j];
+    }
+    if(unscaledDeterminant == 0) return false;
     // BACK
     // now making all elements above main diagonal zeros as well
     for (int i=row-1; i>=0; i--){
         for(int k=i-1; k>=0; k--){
-            h = entry[k][i];
+            h = IdentityMatrix[k][i];
             for(int j=col-1; j>=0; j--){
-                entry[k][j]=entry[k][j]-entry[i][j]*h;
-                IdentityMatrix[k][j]=IdentityMatrix[k][j]-IdentityMatrix[i][j]*h;
+                IdentityMatrix[k][j] -= IdentityMatrix[i][j]*h;
+                entry[k][j] -= entry[i][j]*h;
             }
         }
     }
-    cout << "Our Matrix\n";
-    cout << "\n";
-    for(int i=0; i<row; i++){
-        for(int j=0; j<col; j++){
-            cout << setw(10) << entry[i][j] << " ";
-        }
-        cout << "\n";
-    }
-    cout << "IdentityMatrix\n";
-    cout << "\n";
-    for(int i=0; i<row; i++){
-        for(int j=0; j<col; j++){
-            cout << setw(10) << IdentityMatrix[i][j] << " ";
-        }
-        cout << "\n";
-    }
+    // copying the result from the right-hand side
+    // for(int i=0; i<row; i++){
+    //     for(int j=0; j<col; j++){
+    //         entry[i][j] = IdentityMatrix[i][j];
+    //     }
+    // }
     return true;
 }
