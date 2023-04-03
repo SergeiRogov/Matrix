@@ -88,26 +88,35 @@ void makeAction(const int choice){
     case 1: // add
         A.ReadMatrix();
         B.ReadMatrix();
-        if (ResultMatrix.AddSubtract('+', A, B))
+        if (!ResultMatrix.AddSubtract('+', A, B))
+            cout << "Can't be calculated\n";
+        else 
             ResultMatrix.PrintMatrix();
+        
         break;
     case 2: // substruct
         A.ReadMatrix();
         B.ReadMatrix();
-        if (ResultMatrix.AddSubtract('-', A, B))
+        if (!ResultMatrix.AddSubtract('-', A, B))
+            cout << "Can't be calculated\n";
+        else
             ResultMatrix.PrintMatrix();
         break;
     case 3: // multiply
         A.ReadMatrix();
         B.ReadMatrix();
-        if (ResultMatrix.Multiply(A, B))
+        if (!ResultMatrix.Multiply(A, B))
+            cout << "Can't be calculated\n";
+        else
             ResultMatrix.PrintMatrix();
         break;
     case 4: // inverse
         A.ReadMatrix();
-        if (ResultMatrix.Inverse(A)){
+        if (!ResultMatrix.Inverse(A))
+            cout << "Can't be calculated\n";
+        else
             ResultMatrix.PrintMatrix();
-        }
+        
         break;
     case 5: // No code needed
         break;
@@ -300,10 +309,18 @@ bool Matrix::Inverse(const Matrix &A){
             for(int j=0; j<col; j++){
                 IdentityMatrix[k][j] -= IdentityMatrix[i][j]*h;
                 entry[k][j] -= entry[i][j]*h;
+                if(abs(IdentityMatrix[k][j])<0.00001) IdentityMatrix[k][j]=0;
             }
         }
+        cout << "\n";
+        for(int i=0; i<row; i++){
+            for(int j=0; j<col; j++){
+                cout << setw(10) << IdentityMatrix[i][j] << " ";
+            }
+        cout << "\n";
+        }
     }
-    // at this point we have a trianglular matrix
+    // at this point we have a triangular matrix
     // all elements below main diagonal are zeros
     // check if determinant == 0
     double unscaledDeterminant = 1;
