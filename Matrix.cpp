@@ -5,7 +5,6 @@
  *  \date      09.04.2023
  *  \copyright University of Nicosia.
  */
-
 #include <iostream>
 #include <iomanip> 
 #include <cassert>
@@ -88,7 +87,6 @@ void makeAction(const int choice){
             cout << "\nCan't be calculated\n";
         else 
             ResultMatrix.PrintMatrix();
-        
         break;
     case 2: // substruct
         A.ReadMatrix();
@@ -268,7 +266,9 @@ bool Matrix::Inverse(const Matrix &A){
     assert(A.col>0 && A.col<MAX_COL);
     // should be a square matrix in order to perform inversion
     if(A.row != A.col) return false; 
-    // copying a matrix
+    // performing same operations on matrix and identity matrix
+    // in the end matrix (variable IdentityMatrix) -> turns into identity matrix
+    // and identity matrix (variable entry) -> turns into inverse matrix (answer)
     row = A.row;
     col = A.col;
     for(int i=0; i<row; i++){
