@@ -2,13 +2,12 @@
  *  \brief     This file performs basic matrix operations.
  *  \details   The program shows a menu with 5 options and does matrix operations.
  *  \author    Sergei Rogov U231N0051
- *  \date      01.04.2023
+ *  \date      09.04.2023
  *  \copyright University of Nicosia.
  */
 
 #include <iostream>
 #include <iomanip> 
-#include <cstdlib> 
 #include <cassert>
 
 using namespace std;
@@ -43,19 +42,11 @@ private:
  * @return Returns <code>0</code> on success, any other value otherwise.
  */
 int main(){
-    // Matrix A, B, C;
-    // A.ReadMatrix();
-    // A.PrintMatrix();
-    // B = C = A;
-    // cout << "\nmatrix B";
-    // B.PrintMatrix();
-    // cout << "\nmatrix C";
-    // C.PrintMatrix();
     int choice;
     do {
         displayMenu();
         //executes loop if user inserts not a number or number not in the range 1..5.
-        while (cout << "\nEnter your choice: " && (!(cin >> choice) || choice < 1 || choice > MAX_ROW)) {
+        while (cout << "\nEnter your choice: " && (!(cin >> choice) || choice < 1 || choice > 5)) {
             cin.clear(); 
             cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
             cout << "Invalid input; please enter a number from 1 to 5.\n";
@@ -83,13 +74,14 @@ void displayMenu(){
  * @param choice Indicator of an option from menu.
  */
 void makeAction(const int choice){
+    assert(choice>0 && choice<6);
     Matrix A, B, ResultMatrix;
     switch (choice) {
     case 1: // add
         A.ReadMatrix();
         B.ReadMatrix();
         if (!ResultMatrix.AddSubtract('+', A, B))
-            cout << "Can't be calculated\n";
+            cout << "\nCan't be calculated\n";
         else 
             ResultMatrix.PrintMatrix();
         
@@ -98,7 +90,7 @@ void makeAction(const int choice){
         A.ReadMatrix();
         B.ReadMatrix();
         if (!ResultMatrix.AddSubtract('-', A, B))
-            cout << "Can't be calculated\n";
+            cout << "\nCan't be calculated\n";
         else
             ResultMatrix.PrintMatrix();
         break;
@@ -106,23 +98,21 @@ void makeAction(const int choice){
         A.ReadMatrix();
         B.ReadMatrix();
         if (!ResultMatrix.Multiply(A, B))
-            cout << "Can't be calculated\n";
+            cout << "\nCan't be calculated\n";
         else
             ResultMatrix.PrintMatrix();
         break;
     case 4: // inverse
         A.ReadMatrix();
         if (!ResultMatrix.Inverse(A))
-            cout << "Can't be calculated\n";
+            cout << "\nCan't be calculated\n";
         else
             ResultMatrix.PrintMatrix();
-        
         break;
     case 5: // No code needed
         break;
     default:
-        cerr << "Enter your choice again, please!\n";
-        break;
+        assert(false);
     }
 }
 
@@ -184,6 +174,12 @@ void Matrix::PrintMatrix() const {
  * <code>true</code> otherwise.
  */
 bool Matrix::AddSubtract(const char ch, const Matrix &A, const Matrix &B){
+    assert(ch=='+'|| ch=='-');
+    assert(A.row>0 && A.row<MAX_ROW);
+    assert(A.col>0 && A.col<MAX_COL);
+    assert(B.row>0 && B.row<MAX_ROW);
+    assert(B.col>0 && B.col<MAX_COL);
+    // can be performed only if dimentionality is the same
     if (A.row != B.row || A.col != B.col) return false;
     row = A.row;
     col = A.col;
@@ -212,6 +208,13 @@ bool Matrix::AddSubtract(const char ch, const Matrix &A, const Matrix &B){
  * <code>true</code> otherwise.
  */
 bool Matrix::Multiply(const Matrix &A, const Matrix &B){
+    assert(A.row>0 && A.row<MAX_ROW);
+    assert(A.col>0 && A.col<MAX_COL);
+    assert(B.row>0 && B.row<MAX_ROW);
+    assert(B.col>0 && B.col<MAX_COL);
+    // number of columns of first matrix
+    // should be equal to number of rows of second matrix
+    // in order to perform multiplication
     if (A.col != B.row) return false;
     row = A.row;
     col = B.col;
@@ -257,7 +260,10 @@ Matrix& Matrix::operator=(const Matrix &original){
  * <code>true</code> otherwise.
  */
 bool Matrix::Inverse(const Matrix &A){
-    if(A.row != A.col) return false;
+    assert(A.row>0 && A.row<MAX_ROW);
+    assert(A.col>0 && A.col<MAX_COL);
+    // should be a square matrix in order to perform inversion
+    if(A.row != A.col) return false; 
     // copying a matrix
     row = A.row;
     col = A.col;
@@ -311,13 +317,6 @@ bool Matrix::Inverse(const Matrix &A){
                 entry[k][j] -= entry[i][j]*h;
                 if(abs(IdentityMatrix[k][j])<0.00001) IdentityMatrix[k][j]=0;
             }
-        }
-        cout << "\n";
-        for(int i=0; i<row; i++){
-            for(int j=0; j<col; j++){
-                cout << setw(10) << IdentityMatrix[i][j] << " ";
-            }
-        cout << "\n";
         }
     }
     // at this point we have a triangular matrix
