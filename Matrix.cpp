@@ -319,6 +319,9 @@ bool Matrix::Inverse(const Matrix &A){
             for(int j=0; j<col; j++){
                 IdentityMatrix[k][j] -= IdentityMatrix[i][j]*tempElement;
                 entry[k][j] -= entry[i][j]*tempElement;
+                // when substructing a fraction from equal fraction,
+                // program might calculate it as a close to zero number but not exactly zero
+                // so, I hardcode zero in that case
                 if(abs(IdentityMatrix[k][j])<0.00001) IdentityMatrix[k][j]=0;
             }
         }
