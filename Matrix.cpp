@@ -20,9 +20,13 @@ const int MAX_COL = 20;
 void displayMenu();
 void makeAction(const int);
 
+/** 
+ * Matrix class.
+ * A class to perform basic matrix operations.
+ */
 class Matrix {
 public:
-    Matrix(); //initialize row and col to 0
+    Matrix();
     void ReadMatrix();
     void PrintMatrix() const;
     bool AddSubtract(const char, const Matrix &, const Matrix &);
