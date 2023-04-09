@@ -279,7 +279,7 @@ bool Matrix::Inverse(const Matrix &A){
         }
     }
     // GAUSS algorithm to turn our matrix into identity matrix
-    double h;
+    double tempElement;
     // finding a row with the biggest first element (on absolute value)
     for(int i=0; i<row; i++){
         float amax=IdentityMatrix[i][i];
@@ -294,31 +294,31 @@ bool Matrix::Inverse(const Matrix &A){
         // of the first element (after zeros) should come first
         if(i!=i_max){
             for(int j=0; j<col; j++){
-                h = IdentityMatrix[i][j];
+                tempElement = IdentityMatrix[i][j];
                 IdentityMatrix[i][j]=IdentityMatrix[i_max][j];
-                IdentityMatrix[i_max][j] = h;
-                h = entry[i][j];
+                IdentityMatrix[i_max][j] = tempElement;
+                tempElement = entry[i][j];
                 entry[i][j]=entry[i_max][j];
-                entry[i_max][j] = h;
+                entry[i_max][j] = tempElement;
             }
         }
-        h = IdentityMatrix[i][i];
+        tempElement = IdentityMatrix[i][i];
         // dividing a row by first element
         // (making first element [after zeros] in row to be 1)
-        if (h!=0){
+        if (tempElement!=0){
             for (int j=0; j<col; j++){
-                IdentityMatrix[i][j] /= static_cast<double>(h);
-                entry[i][j] /= static_cast<double>(h);
+                IdentityMatrix[i][j] /= static_cast<double>(tempElement);
+                entry[i][j] /= static_cast<double>(tempElement);
             }
         }
         // substructing [first element * first element in next (following) row] 
         // from all rows below.
         // It creates zeros underneath
         for(int k=i+1; k<row; k++){
-            h = IdentityMatrix[k][i];
+            tempElement = IdentityMatrix[k][i];
             for(int j=0; j<col; j++){
-                IdentityMatrix[k][j] -= IdentityMatrix[i][j]*h;
-                entry[k][j] -= entry[i][j]*h;
+                IdentityMatrix[k][j] -= IdentityMatrix[i][j]*tempElement;
+                entry[k][j] -= entry[i][j]*tempElement;
                 if(abs(IdentityMatrix[k][j])<0.00001) IdentityMatrix[k][j]=0;
             }
         }
@@ -335,10 +335,10 @@ bool Matrix::Inverse(const Matrix &A){
     // now making all elements above main diagonal zeros as well
     for (int i=row-1; i>=0; i--){
         for(int k=i-1; k>=0; k--){
-            h = IdentityMatrix[k][i];
+            tempElement = IdentityMatrix[k][i];
             for(int j=col-1; j>=0; j--){
-                IdentityMatrix[k][j] -= IdentityMatrix[i][j]*h;
-                entry[k][j] -= entry[i][j]*h;
+                IdentityMatrix[k][j] -= IdentityMatrix[i][j]*tempElement;
+                entry[k][j] -= entry[i][j]*tempElement;
             }
         }
     }
